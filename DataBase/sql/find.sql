@@ -1,0 +1,6 @@
+CREATE OR REPLACE FUNCTION find(TEXT)
+RETURNS TABLE (id INTEGER, name TEXT, artist TEXT, price REAL) AS $$
+BEGIN
+  RETURN QUERY  (SELECT * FROM pictures WHERE pictures.name LIKE $1);
+END;
+$$ LANGUAGE plpgsql VOLATILE; 

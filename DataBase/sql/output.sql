@@ -1,0 +1,22 @@
+CREATE OR REPLACE FUNCTION output_pictures()
+RETURNS TABLE (id INTEGER, name TEXT,artist TEXT, cost REAL) AS $$
+BEGIN
+  RETURN QUERY  (SELECT * FROM pictures);
+END;
+$$ LANGUAGE plpgsql VOLATILE;
+
+
+CREATE OR REPLACE FUNCTION output_orders()
+RETURNS TABLE (id INTEGER, picture INTEGER, delivery INTEGER, cost REAL) AS $$
+BEGIN
+  RETURN QUERY  (SELECT * FROM orders);
+END;
+$$ LANGUAGE plpgsql VOLATILE;
+
+
+CREATE OR REPLACE FUNCTION output_delivery()
+RETURNS TABLE (id INTEGER, target TEXT, price REAL) AS $$
+BEGIN
+  RETURN QUERY  (SELECT * FROM delivery);
+END;
+$$ LANGUAGE plpgsql VOLATILE;
