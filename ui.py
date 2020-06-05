@@ -16,6 +16,7 @@ def trigger_little_panel(event):
     global current_row
     global input_frame
     global header
+    global insert_args
     if little_frame  is not None:
         for i in little_frame.grid_slaves():
             i.destroy()
@@ -28,6 +29,7 @@ def trigger_little_panel(event):
     delete_button.bind('<Button-1>', trigger_delete)
     delete_button.place(x=0, y=0)
     header = []
+    insert_args=[]
     if current_table == "pictures":
         header = ["Name", "Artist", "Price"]
     if current_table == "orders":
@@ -37,11 +39,12 @@ def trigger_little_panel(event):
     for i in range(len(header)):
         find_label = Label(little_frame, text=header[i] + ":")
         find_entry = Entry(little_frame)
-        find_entry.place(x=50, y=35 + 20 * i)
-        find_label.place(x=0, y=35 + 20 * i)
+        find_entry.place(x=70, y=40 + 22 * i)
+        find_label.place(x=0, y=40 + 22 * i)
+        insert_args.append(find_entry)
     accept_button = Button(little_frame,text="update row "+str(current_row))
-    accept_button.place(x=0, y=90)
-    accept_button.bind('<Button-1>', trigger_insert)
+    accept_button.place(x=0, y=110)
+    accept_button.bind('<Button-1>', trigger_update)
 
 def create_table(data, table):
     global current_table
@@ -93,6 +96,7 @@ def input_table():
     global con
     global current_table
     global input_frame
+    global insert_args
     input_frame = Frame()
     input_frame.configure(width=250, height=130, bg="white")
     input_frame.place(x=400, y=120)
@@ -100,7 +104,7 @@ def input_table():
     if current_table == "pictures":
         header = ["ID", "Name", "Artist", "Price"]
     if current_table == "orders":
-        header = ["ID", "Picture ID", "Address ID", "Price"]
+        header = ["ID", "Picture ID", "Address ID"]
     if current_table == "delivery":
         header = ["ID", "Address", "Price"]
     insert_args = []
@@ -121,6 +125,17 @@ def trigger_delete(event):
     global current_row
     driver.delete_row(con, current_table, current_row)
     create_table(driver.output_table(con, current_table), current_table) #update
+
+def trigger_update(event):
+    global con
+    global current_table
+    global insert_args
+    global header
+    inp=[current_row]
+    for i in insert_args:
+        inp.append(i.get())
+    driver.insert_table(con, current_table, inp)
+    create_table(driver.output_table(con, current_table), current_table)  # update
 
 def trigger_cleare_all(event):
     global con
@@ -183,7 +198,7 @@ def main(db, login, password, entrypoint_root):
     global con
     global table_frame
     global little_frame
-    #entrypoint_root.destroy()
+    entrypoint_root.destroy()
     table_frame=None
     little_frame = None
     try:
@@ -195,6 +210,3 @@ def main(db, login, password, entrypoint_root):
     create_table([], 'orders')
     create_button_panel()
     root.mainloop()
-
-if __name__=="__main__":
-    main("gr","vasya","vasya", None)

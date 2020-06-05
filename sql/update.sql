@@ -2,11 +2,7 @@ CREATE OR REPLACE FUNCTION update_price_on_picture()
 RETURNS TRIGGER AS $pictures_updater$
 BEGIN
     UPDATE orders
-    SET cost = CASE
-        WHEN NEW.cost is NULL OR OLD.cost is NULL
-        THEN 0
-        ELSE cost - OLD.cost + NEW.cost
-        END
+    SET cost = cost - OLD.cost + NEW.cost
     WHERE NEW.id = picture_id;
     RETURN NEW;
 END;
@@ -16,11 +12,7 @@ CREATE OR REPLACE FUNCTION update_price_on_delivery()
 RETURNS TRIGGER AS $delivery_updater$
 BEGIN
     UPDATE orders
-    SET cost = CASE
-        WHEN NEW.cost is NULL OR OLD.cost is NULL
-        THEN 0
-        ELSE cost - OLD.cost + NEW.cost
-        END
+    SET cost =  cost - OLD.cost + NEW.cost
     WHERE NEW.id = address;
     RETURN NEW;
 END;

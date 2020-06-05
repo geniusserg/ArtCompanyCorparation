@@ -15,3 +15,5 @@ call delete_database('feature','vasya');
 select * from current_database();
 drop extension dblink
 select output_databases()
+select * from pg_stat_activity;
+call delete_database('feature', 'vasya')

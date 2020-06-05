@@ -19,10 +19,14 @@ def trigger_refresh(event):
     label_list = []
     db_data = driver.output_databases(con)
     for i in range(len(db_data)):
-        if db_data[i] == 'postgres' or db_data[i] == 'template0' or db_data[i] == 'template1':
+        if db_data[i][0] == 'postgres':
             continue
-        l_db = Button(text=db_data[i], bg="yellow")
-        l_db.place(x=10, y=100 + i * 25)
+        if db_data[i][0] == 'template0':
+            continue
+        if db_data[i][0] == 'template1':
+            continue
+        l_db = Button(text=db_data[i][0], bg="yellow")
+        l_db.place(x=10, y=100 + (i-3) * 25)
         l_db.bind('<Button-3>', trigger_delete)
         l_db.bind('<Button-1>', trigger_connect)
         label_list.append(l_db)
@@ -31,15 +35,15 @@ def trigger_refresh(event):
 def trigger_delete(event):
     global login
     global password
-    res = driver.delete_database("postgres", log, pas)
+    res = driver.delete_database(event.widget.cget("text"), log, pas)
     if res == 1:
         print('cant successfully delete database')
-
+    trigger_refresh(None)
 
 def trigger_create(event):
     global login
     global password
-    res = driver.create_database(event.widget.cget("text"), log, pas)
+    res = driver.create_database(event.widget.get(), log, pas)
     trigger_refresh(None)
     if res == 1:
         print('cant successfully create database')
@@ -70,12 +74,13 @@ def main(login, password, entry_root):
     root.geometry("490x400+30+30")
     label_welcome = Label(text="Welcome to Paint Company Inc. databases manager", font=3, bg="yellow")
     label_welcome.place(x=0, y=0)
-    label_create_db = Label(text='Create DataBase enter name')
-    label_create_db.place(x=30, y=30)
+    label_create_db = Label(text='To create DataBase enter new database name here!')
+    label_create_db.place(x=0, y=30)
     database = Entry(root)
     database.place(x=10, y=50)
     database.bind('<Return>', trigger_create)
     button_refresh = Button(text="refresh list of available databases", bg="red")
     button_refresh.place(x=10, y=70)
     button_refresh.bind('<Button-1>', trigger_refresh)
+    trigger_refresh(None)
     root.mainloop()

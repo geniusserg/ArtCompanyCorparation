@@ -21,4 +21,3 @@ BEGIN
   RETURN QUERY  (SELECT datname FROM pg_database);
 END;
 $$ LANGUAGE plpgsql VOLATILE;
-DROP FUNCTION output_databases()

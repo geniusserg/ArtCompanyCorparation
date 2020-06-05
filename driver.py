@@ -8,9 +8,9 @@ global commands
 def load_functions():
     global commands
     commands = {}
-    for i in os.listdir(path="C:\\Users\\sdanilov\\Desktop\\DataBase\\sql"):
+    for i in os.listdir(path=os.getcwd()+"\\sql"):
         command = ""
-        file = open("C:\\Users\\sdanilov\\Desktop\\DataBase\\sql\\" + i, "r")
+        file = open(os.getcwd()+"\\sql\\" + i, "r")
         func = i.split(".")[0]
         for j in file:
             command = command + j + '\n'
@@ -38,8 +38,6 @@ def create_database(name, login, password):
     except():
         print("Error connect db postgres")
         return
-    cur.execute(commands["create_db"])
-    cur.execute(commands["delete_db"])
     try:
         cur.execute("call create_database('" + database_name + "','" + password + "');")
     except:
@@ -189,7 +187,7 @@ def clear_db(con):
 def delete_database(name, login, password):
     con_del = connect_database("postgres", login, password)
     cs = con_del.cursor()
-    cs.execute("call delete_database(\'" + name + "\');")
+    cs.execute("call delete_database(\'" + name + "\',\'" + password + "\');")
     try:
         con_del = connect_database(name, login, password)
     except:
@@ -211,8 +209,7 @@ def output_databases(con):
     return ret
 
 
-def update(con, table, id, col, val):
-    pass
+
 
 
 if __name__ == '__main__':
@@ -221,52 +218,3 @@ if __name__ == '__main__':
     insert_table(con, "pictures", [2, 'art1', 'Arts', 250])
     for i in output_table(con, 'pictures'):
         print(i)
-'''
-    db.insert_percent_rate(1, 0.50)
-    db.insert_freelancer(1, "name", 1)
-    db.insert_customer(1, "name", 1)
-
-    db.insert_order(1, 1, 1, "abc", 100)
-    db.insert_order(2, 2, 1, "cba", 100)
-    db.insert_order(3, 1, 2, "dfn", 100)
-    db.insert_order(4, 2, 2, "kkk", 100)
-    db.insert_order(5, 1, 1, "abc1", 700)
-
-    print(db.get_orders())
-    print(db.get_customers())
-    print(db.get_freelancers())
-    print(db.get_percent_rate())
-
-    db.insert_percent_rate(1, 0.10)
-
-    print(db.get_orders())
-    print(db.get_customers())
-    print(db.get_freelancers())
-    print(db.get_percent_rate())
-
-    # db.clear_tables()
-    # db.clear_table('orders')
-    # db.clear_table('freelancers')
-    # db.clear_table('customers')
-    # db.clear_table('percent_rate')
-
-    # print(db.get_orders())
-    # print(db.get_customers())
-    # print(db.get_freelancers())
-    # print(db.get_percent_rate())
-
-    # print(db.find_by_description('b'))
-
-    # db.delete_by_description('b')
-    # print(db.get_orders())
-
-    db.delete_record('orders', 1)
-    db.delete_record('freelancers', 1)
-    db.delete_record('customers', 1)
-    db.delete_record('percent_rate', 1)
-
-    print(db.get_orders())
-    print(db.get_customers())
-    print(db.get_freelancers())
-    print(db.get_percent_rate())
-    '''
