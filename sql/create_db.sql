@@ -15,9 +15,10 @@ BEGIN
 END
 $$;
 
-CREATE OR REPLACE FUNCTION output_tables()
-RETURNS TABLE (id TEXT) AS $$
+CREATE OR REPLACE FUNCTION output_databases()
+RETURNS TABLE (id name) AS $$
 BEGIN
-  RETURN QUERY  (SELECT * FROM pg_database);
+  RETURN QUERY  (SELECT datname FROM pg_database);
 END;
 $$ LANGUAGE plpgsql VOLATILE;
+DROP FUNCTION output_databases()

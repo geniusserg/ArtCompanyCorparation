@@ -1,7 +1,8 @@
 from tkinter import *
 import driver
 import ui
-
+import database_entry
+root = None
 login = None
 password = None
 
@@ -17,7 +18,10 @@ def trigger_install(event):
         event.widget.configure(bg="red")
 
 def trigger_auth(event):
-    res = ui.main("gr", login.get(), password.get())
+    global root
+    global login
+    global password
+    res = database_entry.main(login.get(), password.get(), root)
     if res == 1:
         print('cant successfully connect to database')
 
@@ -28,9 +32,9 @@ if __name__ == "__main__":
     label_welcome.place(x=0, y=0)
     login_label = Label(text="login:")
     login_label.place(x=10, y=30)
-    login = Entry()
+    login = Entry(root)
     login.place(x=10, y=50)
-    password = Entry(show="*")
+    password = Entry(root, show="*")
     pass_label = Label(text="password:")
     pass_label.place(x=10, y=80)
     password.place(x=10, y=100)

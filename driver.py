@@ -1,7 +1,9 @@
 import os
 import psycopg2
 from psycopg2.extensions import ISOLATION_LEVEL_AUTOCOMMIT
+
 global commands
+
 
 def load_functions():
     global commands
@@ -13,6 +15,7 @@ def load_functions():
         for j in file:
             command = command + j + '\n'
         commands[func] = command
+
 
 def create_database(name, login, password):
     result = False
@@ -38,7 +41,7 @@ def create_database(name, login, password):
     cur.execute(commands["create_db"])
     cur.execute(commands["delete_db"])
     try:
-        cur.execute("call create_database('"+database_name+"','"+ password+"');")
+        cur.execute("call create_database('" + database_name + "','" + password + "');")
     except:
         print("already exists!!!")
         return
@@ -63,6 +66,7 @@ def create_database(name, login, password):
         cur.execute(commands[i])
     cur.close()
     return 0
+
 
 def install_functions_create_delete_db(login, password):
     con = psycopg2.connect(
@@ -89,6 +93,7 @@ def install_functions_create_delete_db(login, password):
         return None
     return 0
 
+
 def connect_database(name, login, password):
     con = psycopg2.connect(
         database=name,
@@ -102,49 +107,53 @@ def connect_database(name, login, password):
     try:
         cur.execute("select * from current_database()")
     except():
-        print("Error connect db"+name)
+        print("Error connect db" + name)
         return None
     return con
+
 
 def output_table(con, name):
     cs = con.cursor()
     try:
-        cs.execute("select output_"+name+"()")
+        cs.execute("select output_" + name + "()")
     except:
         return None
     result = cs.fetchall()
     ret = []
     for i in result:
-        ret.append(list(i[0].replace('(','').replace(')','').split(",")))
+        ret.append(list(i[0].replace('(', '').replace(')', '').split(",")))
     return ret
+
 
 def insert_table(con, name, args):
     cs = con.cursor()
-    command = "call insert_"+name+"("
+    command = "call insert_" + name + "("
     for i in args:
-        if type(i)==str:
+        if type(i) == str:
             command = command + "'" + str(i) + "',"
         else:
             command = command + str(i) + ","
-    command=command[:-1]+");"
+    command = command[:-1] + ");"
     try:
         cs.execute(command)
     except:
         return 1
     return 0
 
+
 def delete_row(con, name, id):
     cs = con.cursor()
     try:
-        cs.execute("call delete_record(\'"+name+"\',"+id+");")
+        cs.execute("call delete_record(\'" + name + "\'," + id + ");")
     except:
         return 1
     return 0
 
+
 def find(con, picture_name):
     cs = con.cursor()
     try:
-        cs.execute("select find(\'"+picture_name+"\');")
+        cs.execute("select find(\'" + picture_name + "\');")
     except:
         print('cant perform search')
     try:
@@ -153,17 +162,19 @@ def find(con, picture_name):
         return []
     ret = []
     for i in result:
-        ret.append(list(i[0].replace('(','').replace(')','').split(",")))
+        ret.append(list(i[0].replace('(', '').replace(')', '').split(",")))
     return ret
+
 
 def clear_table(con, name):
     cs = con.cursor()
     try:
-        cs.execute("call clear_table(\'"+name+"\');")
+        cs.execute("call clear(\'" + name + "\');")
     except:
-        print("cant clear table"+name)
+        print("cant clear table" + name)
         return 1
     return 0
+
 
 def clear_db(con):
     cs = con.cursor()
@@ -174,10 +185,11 @@ def clear_db(con):
         return 1
     return 0
 
+
 def delete_database(name, login, password):
     con_del = connect_database("postgres", login, password)
     cs = con_del.cursor()
-    cs.execute("call delete_database(\'"+name+"\');")
+    cs.execute("call delete_database(\'" + name + "\');")
     try:
         con_del = connect_database(name, login, password)
     except:
@@ -186,8 +198,25 @@ def delete_database(name, login, password):
     return 1
 
 
+def output_databases(con):
+    cs = con.cursor()
+    try:
+        cs.execute("select output_databases()")
+    except:
+        return None
+    result = cs.fetchall()
+    ret = []
+    for i in result:
+        ret.append(list(i[0].replace('(', '').replace(')', '').split(",")))
+    return ret
+
+
+def update(con, table, id, col, val):
+    pass
+
+
 if __name__ == '__main__':
-    #create_database('gr', 'vasya', 'vasya')
+    # create_database('gr', 'vasya', 'vasya')
     con = connect_database('gr', 'vasya', 'vasya')
     insert_table(con, "pictures", [2, 'art1', 'Arts', 250])
     for i in output_table(con, 'pictures'):
